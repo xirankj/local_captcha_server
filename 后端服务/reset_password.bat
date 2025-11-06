@@ -8,7 +8,7 @@ echo.
 
 REM 检查数据库文件是否存在
 if not exist "users.db" (
-    echo ❌ 数据库文件不存在，请先启动服务创建数据库
+    echo X 数据库文件不存在，请先启动服务创建数据库
     echo.
     pause
     exit /b 1
@@ -20,7 +20,7 @@ python reset_password.py
 REM 检查返回状态
 if errorlevel 1 (
     echo.
-    echo ❌ 重置失败
+    echo X 重置失败
     echo.
     echo 可能的原因：
     echo 1. 数据库结构需要更新
@@ -35,4 +35,3 @@ if errorlevel 1 (
 
 pause
 exit /b 0
-
