@@ -1,0 +1,12 @@
+{
+  "admin": {
+    "username": "admin",
+    "password_hash": "$2b$12$7KzHvHqR3aI5nXxXxXxXxOw0qF8KqF8KqF8KqF8KqF8KqF8KqF8Kq",
+    "enabled": true,
+    "is_default_password": true
+  },
+  "session_timeout": 3600,
+  "hitokoto_api": "https://v1.hitokoto.cn",
+  "background_api": "https://img.xirankj.top/api/images?category=动漫",
+  "note": "密码已加密存储，请勿手动修改此文件"
+}

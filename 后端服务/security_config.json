@@ -1,0 +1,19 @@
+{
+  "config": {
+    "enable_whitelist": false,
+    "enable_blacklist": false,
+    "max_login_failures": 5,
+    "lockout_duration": 900,
+    "failure_window": 300,
+    "csrf_token_lifetime": 3600,
+    "enable_csrf": true
+  },
+  "whitelist": [
+    "192.168.100.111",
+    "192.168.1.111"
+  ],
+  "blacklist": [
+    "192.168.100.180",
+    "192.168.1.111"
+  ]
+}

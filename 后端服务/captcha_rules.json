@@ -1,0 +1,49 @@
+{
+  "www.verify5.com": [
+    {
+      "path": "https://www.verify5.com/demo",
+      "title": "V5验证官网 - 基础套餐免费 -滑块验证，行为验证，防刷验证 - 在线体验",
+      "host": "www.verify5.com",
+      "idcard": "local-user",
+      "ocr_type": 4,
+      "big_image": "img.v5-canvas-bg",
+      "small_image": "img.v5-canvas-slice",
+      "move_item": "span.v5-icon-button.v5-icon-1"
+    }
+  ],
+  "captcha.tianai.cloud": [
+    {
+      "path": "https://captcha.tianai.cloud/",
+      "title": "行为验证码(tianai-captcha)",
+      "host": "captcha.tianai.cloud",
+      "idcard": "local-user",
+      "ocr_type": 4,
+      "small_image": "img[src^='//minio.tianai.cloud/captcha/captcha/gen/f164218ce596e14ad2d2baf75dc38137.png?']",
+      "move_item": "div.slider-move-btn",
+      "big_image": "canvas#tianai-captcha-slider-bg-canvas"
+    }
+  ],
+  "dun.163.com": [
+    {
+      "path": "https://dun.163.com/trial/jigsaw",
+      "title": "滑动拼图验证码_拼图验证_图形验证_在线体验_网易易盾",
+      "host": "dun.163.com",
+      "idcard": "local-user",
+      "ocr_type": 4,
+      "big_image": "img[alt='验证码背景']",
+      "small_image": "img[alt='验证码滑块']",
+      "move_item": "div.yidun_slider"
+    }
+  ],
+  "www.chaojiying.com": [
+    {
+      "img": "div#userone > section > form > div:nth-of-type(3) > div > img",
+      "input": "div#userone  section form.form-horizontal.common-login-form div.form-group.common-login-group div.col-xs-8.common-login-col-xs-10 input#auth",
+      "path": "https://www.chaojiying.com/demo.html",
+      "title": "验证码在线免费识别-超级鹰验证码识别",
+      "host": "www.chaojiying.com",
+      "ocr_type": 1,
+      "idcard": "local-user"
+    }
+  ]
+}

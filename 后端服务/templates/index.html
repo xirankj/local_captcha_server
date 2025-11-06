@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>本地验证码识别服务 - 管理中心</title>
+    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+</head>
+<body>
+    <!-- 关于页面（默认页面） -->
+    <div class="about-page" id="aboutPage">
+        <!-- 顶部导航栏 -->
+        <div class="top-navbar">
+            <div class="logo-area">
+                <h1>🔓 本地验证码识别服务</h1>
+            </div>
+            <div class="navbar-right">
+                <button class="admin-login-btn" onclick="showLoginPage()">🔑 管理员登录</button>
+            </div>
+        </div>
+        
+        <!-- 关于页面内容 -->
+        <div class="about-container">
+            <div class="about-content">
+                <h2 style="border-bottom: 2px solid #1890ff; padding-bottom: 15px; margin-bottom: 25px;">
+                    ℹ️ 关于系统
+                </h2>
+                
+                <!-- 系统介绍 -->
+                <div style="background: linear-gradient(135deg, #f9f0ff 0%, #efdbff 100%); padding: 20px 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 12px rgba(114, 46, 209, 0.15); border: 1px solid rgba(114, 46, 209, 0.2);">
+                    <h3 style="margin: 0 0 12px 0; font-size: 20px; color: #531dab; font-weight: 600;">🎯 本地验证码识别服务</h3>
+                    <p style="margin: 0; line-height: 1.7; font-size: 14px; color: #595959;">
+                        基于 ddddocr 的本地验证码识别服务，支持英数字符、滑块拼图等多种验证码类型。
+                        提供完整的管理后台、API Key 管理、识别历史追踪等功能。<br>
+                        <span style="color: #722ed1; font-weight: 500;">无需联网，保护隐私，高效稳定。</span>
+                    </p>
+                </div>
+                
+                <!-- 功能特性 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">✨ 核心功能</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; border-left: 4px solid #1890ff;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #1890ff;">🔍 验证码识别</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持英数字符、滑块拼图、滑块行为等多种验证码类型，基于 ddddocr 和 OpenCV 实现
+                            </div>
+                        </div>
+                        <div style="background: #f6ffed; padding: 20px; border-radius: 8px; border-left: 4px solid #52c41a;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #52c41a;">🔑 API 管理</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                完整的 API Key 管理系统，支持创建、启用/禁用、使用统计、按网站和类型分类统计
+                            </div>
+                        </div>
+                        <div style="background: #fff7e6; padding: 20px; border-radius: 8px; border-left: 4px solid #fa8c16;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #fa8c16;">📊 历史追踪</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                记录每次识别的详细信息，包括时间、网站、模型、API Key、结果和耗时
+                            </div>
+                        </div>
+                        <div style="background: #fff0f6; padding: 20px; border-radius: 8px; border-left: 4px solid #eb2f96;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #eb2f96;">🛡️ 安全防护</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                IP 白名单/黑名单、请求限流、登录失败锁定、JWT 认证、CSRF 保护
+                            </div>
+                        </div>
+                        <div style="background: #f9f0ff; padding: 20px; border-radius: 8px; border-left: 4px solid #722ed1;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">🎨 规则管理</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持为不同网站配置识别规则、预处理选项、图像处理参数等
+                            </div>
+                        </div>
+                        <div style="background: #e6fffb; padding: 20px; border-radius: 8px; border-left: 4px solid #13c2c2;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #13c2c2;">🤖 模型管理</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持多个识别模型、预处理选项配置、图像增强等功能
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- API 接口文档 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🔌 API 接口文档</h3>
+                    
+                    <!-- 验证码识别接口 -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #52c41a; margin-bottom: 10px;">验证码识别接口</h4>
+                        <table class="rate-limit-table" style="font-size: 13px;">
+                            <thead>
+                                <tr style="background: #fafafa;">
+                                    <th style="width: 80px;">方法</th>
+                                    <th style="width: 200px;">路径</th>
+                                    <th>说明</th>
+                                    <th style="width: 100px;">认证</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/hello</code></td>
+                                    <td>验证码识别（支持英数/滑块/行为识别）</td>
+                                    <td><span style="color: #f5222d;">API Key</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 规则管理接口 -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #52c41a; margin-bottom: 10px;">规则管理接口</h4>
+                        <table class="rate-limit-table" style="font-size: 13px;">
+                            <thead>
+                                <tr style="background: #fafafa;">
+                                    <th style="width: 80px;">方法</th>
+                                    <th style="width: 200px;">路径</th>
+                                    <th>说明</th>
+                                    <th style="width: 100px;">认证</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/rules</code></td>
+                                    <td>获取所有规则</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/captchaHostQuery</code></td>
+                                    <td>查询网站规则</td>
+                                    <td><span style="color: #52c41a;">API Key</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/captchaHostAdd</code></td>
+                                    <td>添加网站规则</td>
+                                    <td><span style="color: #52c41a;">API Key</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/captchaHostDel</code></td>
+                                    <td>删除网站规则</td>
+                                    <td><span style="color: #52c41a;">API Key</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/rules/export</code></td>
+                                    <td>导出规则文件</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 管理后台接口 -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #52c41a; margin-bottom: 10px;">管理后台接口</h4>
+                        <table class="rate-limit-table" style="font-size: 13px;">
+                            <thead>
+                                <tr style="background: #fafafa;">
+                                    <th style="width: 80px;">方法</th>
+                                    <th style="width: 200px;">路径</th>
+                                    <th>说明</th>
+                                    <th style="width: 100px;">认证</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/admin/login</code></td>
+                                    <td>管理员登录</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/admin/logout</code></td>
+                                    <td>管理员登出</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/admin/status</code></td>
+                                    <td>检查登录状态</td>
+                                    <td><span style="color: #f5222d;">JWT</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/history/stats</code></td>
+                                    <td>获取识别历史统计</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/history/records</code></td>
+                                    <td>获取识别历史记录</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #fa8c16; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">PUT</span></td>
+                                    <td><code>/models/current</code></td>
+                                    <td>切换当前模型</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/health</code></td>
+                                    <td>健康检查</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 验证码类型说明 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🎯 支持的验证码类型</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <div style="font-weight: bold; color: #1890ff; margin-bottom: 8px;">🔤 英数字符验证码</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                类型代码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">ocr_type=1</code>
+                            </div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持常见的英文字母和数字组合验证码，使用 ddddocr 进行识别
+                            </div>
+                        </div>
+                        <div style="background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <div style="font-weight: bold; color: #52c41a; margin-bottom: 8px;">🧩 滑动拼图验证码</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                类型代码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">ocr_type=4</code>
+                            </div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                识别滑块拼图缺口位置，返回滑动距离，基于 ddddocr 滑块模型
+                            </div>
+                        </div>
+                        <div style="background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <div style="font-weight: bold; color: #fa8c16; margin-bottom: 8px;">↔️ 滑块行为验证码</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                类型代码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">ocr_type=5</code>
+                            </div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                基于行为算法计算滑动距离，适用于简单的滑块验证
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 技术栈 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🛠️ 技术栈</h3>
+                    <div style="background: #fafafa; padding: 20px; border-radius: 8px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">后端框架</div>
+                                <div style="font-size: 13px; color: #666;">Flask 3.0+</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">OCR引擎</div>
+                                <div style="font-size: 13px; color: #666;">ddddocr, OpenCV</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">数据存储</div>
+                                <div style="font-size: 13px; color: #666;">SQLite, JSON</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">身份认证</div>
+                                <div style="font-size: 13px; color: #666;">JWT, bcrypt</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">前端技术</div>
+                                <div style="font-size: 13px; color: #666;">原生 JavaScript</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">日志系统</div>
+                                <div style="font-size: 13px; color: #666;">Python logging</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 安全特性 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🔒 安全特性</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ IP 白名单/黑名单控制
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 请求频率限制（滑动窗口）
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 登录失败锁定机制
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ JWT Token 身份认证
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ CSRF 保护
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ API Key 管理
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 密码 bcrypt 加密
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 完整的访问日志
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 使用指南 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">📖 快速开始</h3>
+                    <div style="background: #f6ffed; border: 1px solid #b7eb8f; padding: 20px; border-radius: 8px;">
+                        <ol style="margin: 0; padding-left: 20px; line-height: 2;">
+                            <li>在 "🔑 API Key 管理" 页面创建 API Key</li>
+                            <li>将 API Key 配置到您的 Tampermonkey 脚本中</li>
+                            <li>调用 <code style="background: white; padding: 2px 6px; border-radius: 3px;">/hello</code> 接口进行验证码识别</li>
+                            <li>在 "📊 识别历史" 页面查看识别记录</li>
+                            <li>在 "🎨 规则管理" 页面配置网站识别规则</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <!-- 版本信息 -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">📌 版本信息</h3>
+                    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; font-size: 13px;">
+                            <div style="color: #999;">当前版本:</div>
+                            <div style="font-weight: bold; color: #1890ff;">v2.0.0</div>
+                            
+                            <div style="color: #999;">更新时间:</div>
+                            <div>2025-10-22</div>
+                            
+                            <div style="color: #999;">Python 版本:</div>
+                            <div>Python 3.8+</div>
+                            
+                            <div style="color: #999;">默认端口:</div>
+                            <div>1205</div>
+                            
+                            <div style="color: #999;">项目地址:</div>
+                            <div><a href="#" style="color: #1890ff; text-decoration: none;">GitHub</a></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 页脚 -->
+                <div style="text-align: center; padding: 20px; color: #999; font-size: 12px; border-top: 1px solid #e8e8e8; margin-top: 30px;">
+                    <p style="margin: 0;">© 2025 本地验证码识别服务 | 基于 Flask + ddddocr 构建</p>
+                    <p style="margin: 8px 0 0 0;">⚡ 无需联网 | 🔒 保护隐私 | 🚀 高效稳定</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 登录页面 -->
+    <div class="login-container" id="loginContainer" style="display: none;">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>🔓 管理员登录</h1>
+                <p>本地验证码识别服务</p>
+            </div>
+            
+            <div class="error-message" id="loginError"></div>
+            
+            <form id="loginForm" onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" name="username" required autofocus placeholder="请输入用户名">
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" name="password" required placeholder="请输入密码">
+                </div>
+                
+                <button type="submit" class="login-btn" id="loginBtn">登录</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 主应用界面 -->
+    <div class="container" id="mainApp" style="display: none;">
+        <!-- 顶部导航栏 -->
+        <div class="top-navbar">
+            <div class="logo-area">
+                <h1>🔓 验证码识别管理系统</h1>
+            </div>
+            <div class="navbar-right">
+                <div class="user-info">
+                    <span>👤 管理员</span>
+                </div>
+                <a class="logout-link" onclick="handleLogout()">退出登录</a>
+            </div>
+        </div>
+        
+        <!-- 主内容区域 -->
+        <div class="main-wrapper">
+            <!-- 左侧菜单 -->
+            <div class="sidebar">
+                <div class="menu">
+                    <div class="menu-item active" onclick="showPage('home', event)">
+                        <span class="menu-icon">🏠</span>
+                        <span>首页</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('rules', event)">
+                        <span class="menu-icon">📋</span>
+                        <span>查看规则</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('apikeys', event)">
+                        <span class="menu-icon">🔑</span>
+                        <span>API Keys</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('security', event)">
+                        <span class="menu-icon">🔒</span>
+                        <span>安全管理</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('history', event)">
+                        <span class="menu-icon">📊</span>
+                        <span>识别历史</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('models', event)">
+                        <span class="menu-icon">🤖</span>
+                        <span>模型管理</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('settings', event)">
+                        <span class="menu-icon">⚙️</span>
+                        <span>系统设置</span>
+                    </div>
+                    <div class="menu-item" onclick="showPage('about', event)">
+                        <span class="menu-icon">ℹ️</span>
+                        <span>关于</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 右侧内容 -->
+            <div class="main-content">
+            <!-- 首页 -->
+            <div id="home" class="content-card active">
+                <h2>🏠 服务概览</h2>
+                
+                <!-- 服务信息展示框 -->
+                <div style="background: linear-gradient(135deg, #e6f7ff 0%, #bae7ff 100%); padding: 20px 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 12px rgba(24, 144, 255, 0.15); border: 1px solid rgba(24, 144, 255, 0.2);">
+                    <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #0050b3;">🚀 本地验证码识别服务</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(24, 144, 255, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">📍 服务地址</div>
+                            <div style="font-size: 14px; font-weight: 600; color: #1890ff;">http://localhost:1205</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(24, 144, 255, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">📝 当前规则数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #0050b3;" id="rulesCount">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(24, 144, 255, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">⚡ 服务状态</div>
+                            <div style="font-size: 15px; font-weight: 600; color: #52c41a;">✅ 运行中</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h2 style="margin-top: 30px;">💾 规则持久化</h2>
+                <p style="color: #666; line-height: 2; font-size: 13px;">
+                    用户添加的验证码识别规则会自动保存，重启服务后仍然有效。
+                </p>
+                <ul class="feature-list" style="margin-top: 15px;">
+                    <li class="feature-item">自动加载: 服务启动时自动加载规则</li>
+                    <li class="feature-item">自动保存: 添加/删除规则时实时保存</li>
+                    <li class="feature-item">持久化: 重启后规则仍然有效</li>
+                </ul>
+            </div>
+            
+            <!-- 查看规则 -->
+            <div id="rules" class="content-card">
+                <div class="rules-container">
+                    <div class="rules-header">
+                        <h2 style="margin: 0; border: none;">📋 所有规则</h2>
+                        <span class="rules-count" id="rulesCountText">加载中...</span>
+                    </div>
+                    <div id="rulesContent">
+                        <div class="no-rules">加载中...</div>
+                    </div>
+                </div>
+                <button class="download-btn" onclick="downloadRules()">
+                    📥 下载规则备份
+                </button>
+                <button class="btn-import" onclick="showImportModal()">
+                    📤 导入规则
+                </button>
+            </div>
+            
+            <!-- 安全管理 -->
+            <div id="security" class="content-card">
+                <h2>🔒 安全管理</h2>
+                
+                <!-- 安全统计展示框 -->
+                <div style="background: linear-gradient(135deg, #fff7e6 0%, #ffe7ba 100%); padding: 20px 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 12px rgba(250, 173, 20, 0.15); border: 1px solid rgba(250, 173, 20, 0.2);">
+                    <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #d46b08;">🛡️ 安全防护统计</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(250, 173, 20, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">✅ 白名单IP数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #52c41a;" id="whitelistCount">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(250, 173, 20, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">🚫 黑名单IP数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #ff4d4f;" id="blacklistCount">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(250, 173, 20, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">🔒 锁定的IP</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #fa8c16;" id="lockedIpsCount">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(250, 173, 20, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">❌ 失败记录</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #ff4d4f;" id="failedLoginsCount">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 安全配置 -->
+                <div class="security-config" style="margin-bottom: 30px;">
+                    <h3>⚙️ 安全配置</h3>
+                    <div class="config-form">
+                        <div class="form-row">
+                            <label class="form-label">
+                                <input type="checkbox" id="enableWhitelist" onchange="updateSecurityConfig()">
+                                启用IP白名单
+                            </label>
+                            <span class="form-hint">启用后，只有白名单中的IP可以访问</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">
+                                <input type="checkbox" id="enableBlacklist" onchange="updateSecurityConfig()">
+                                启用IP黑名单
+                            </label>
+                            <span class="form-hint">启用后，黑名单中的IP无法访问</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">
+                                <input type="checkbox" id="enableCsrf" onchange="updateSecurityConfig()">
+                                启用CSRF保护
+                            </label>
+                            <span class="form-hint">防止跨站请求伪造攻击</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">最大登录失败次数</label>
+                            <input type="number" id="maxLoginFailures" min="1" max="20" value="5" onchange="updateSecurityConfig()" style="width: 100px;">
+                            <span class="form-hint">超过此次数将锁定IP</span>
+                        </div>
+                        <div class="form-row">
+                            <label class="form-label">锁定时长（秒）</label>
+                            <input type="number" id="lockoutDuration" min="60" max="7200" value="900" onchange="updateSecurityConfig()" style="width: 100px;">
+                            <span class="form-hint">IP被锁定的时长</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- IP白名单管理 -->
+                <div class="ip-management" style="margin-bottom: 30px;">
+                    <h3>✅ IP白名单</h3>
+                    <div class="ip-input-group">
+                        <input type="text" id="whitelistIpInput" placeholder="输入IP地址，如：192.168.1.100" style="flex: 1;">
+                        <button class="btn-primary" onclick="addToWhitelist()">添加到白名单</button>
+                    </div>
+                    <div id="whitelistContent" class="ip-list">
+                        <div class="no-data">加载中...</div>
+                    </div>
+                </div>
+                
+                <!-- IP黑名单管理 -->
+                <div class="ip-management" style="margin-bottom: 30px;">
+                    <h3>🚫 IP黑名单</h3>
+                    <div class="ip-input-group">
+                        <input type="text" id="blacklistIpInput" placeholder="输入IP地址，如：1.2.3.4" style="flex: 1;">
+                        <button class="btn-primary" onclick="addToBlacklist()">添加到黑名单</button>
+                    </div>
+                    <div id="blacklistContent" class="ip-list">
+                        <div class="no-data">加载中...</div>
+                    </div>
+                </div>
+                
+                <!-- 限流配置说明 -->
+                <div class="rate-limit-info" style="margin-bottom: 30px;">
+                    <h3>⚡ 请求限流配置</h3>
+                    <table class="rate-limit-table">
+                        <thead>
+                            <tr>
+                                <th>接口</th>
+                                <th>限制</th>
+                                <th>说明</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><code>/hello</code></td>
+                                <td>100次/分钟</td>
+                                <td>验证码识别接口</td>
+                            </tr>
+                            <tr>
+                                <td><code>/admin/login</code></td>
+                                <td>5次/分钟</td>
+                                <td>登录接口（防暴力破解）</td>
+                            </tr>
+                            <tr>
+                                <td><code>/captchaHostQuery</code></td>
+                                <td>200次/分钟</td>
+                                <td>规则查询接口</td>
+                            </tr>
+                            <tr>
+                                <td><code>/captchaHostAdd</code></td>
+                                <td>50次/分钟</td>
+                                <td>添加规则接口</td>
+                            </tr>
+                            <tr>
+                                <td><code>/captchaHostDel</code></td>
+                                <td>50次/分钟</td>
+                                <td>删除规则接口</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- 识别历史 -->
+            <div id="history" class="content-card">
+                <h2>📊 识别历史</h2>
+                
+                <!-- 统计展示框 -->
+                <div style="background: linear-gradient(135deg, #f9f0ff 0%, #efdbff 100%); padding: 20px 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 12px rgba(114, 46, 209, 0.15); border: 1px solid rgba(114, 46, 209, 0.2);">
+                    <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #531dab;">📈 识别统计数据</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(114, 46, 209, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">📊 总识别次数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #722ed1;" id="filteredTotal">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(114, 46, 209, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">✅ 成功次数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #52c41a;" id="filteredSuccess">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(114, 46, 209, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">❌ 失败次数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #ff4d4f;" id="filteredFailed">-</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(114, 46, 209, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">📈 成功率</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #722ed1;" id="filteredSuccessRate">-</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 筛选选项 -->
+                <div class="history-filters" style="margin-bottom: 20px; background: #f9f9f9; padding: 20px; border-radius: 8px;">
+                    <h3 style="margin: 0 0 15px 0; font-size: 16px;">🔍 筛选条件</h3>
+                    
+                    <!-- 第一行筛选 -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">验证码类型</label>
+                            <select id="historyTypeFilter" onchange="loadHistoryRecords()" class="filter-select">
+                                <option value="">全部类型</option>
+                                <option value="1">英数验证码</option>
+                                <option value="4">滑动拼图</option>
+                                <option value="5">滑块行为</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">网站</label>
+                            <select id="historyHostFilter" onchange="loadHistoryRecords()" class="filter-select">
+                                <option value="">全部网站</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">API Key</label>
+                            <select id="historyApiKeyFilter" onchange="loadHistoryRecords()" class="filter-select">
+                                <option value="">全部 API Key</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">状态</label>
+                            <select id="historyStatusFilter" onchange="loadHistoryRecords()" class="filter-select">
+                                <option value="">全部状态</option>
+                                <option value="success">成功</option>
+                                <option value="failed">失败</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- 第二行筛选 -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px;">
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">开始日期</label>
+                            <input type="date" id="historyStartDate" onchange="loadHistoryRecords()" class="filter-input">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">结束日期</label>
+                            <input type="date" id="historyEndDate" onchange="loadHistoryRecords()" class="filter-input">
+                        </div>
+                        
+                        <div>
+                            <label style="display: block; margin-bottom: 5px; font-size: 13px; color: #666;">显示数量</label>
+                            <select id="historyLimitFilter" onchange="loadHistoryRecords()" class="filter-select">
+                                <option value="50">50条</option>
+                                <option value="100">100条</option>
+                                <option value="200">200条</option>
+                                <option value="500">500条</option>
+                            </select>
+                        </div>
+                        
+                        <div style="display: flex; align-items: flex-end; gap: 10px;">
+                            <button class="btn-secondary" onclick="resetFilters()" style="flex: 1;">
+                                重置筛选
+                            </button>
+                            <button class="btn-primary" onclick="clearHistory()" style="flex: 1;">
+                                清除历史
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 详细统计信息 -->
+                <div id="detailedStats" style="margin-bottom: 20px; display: none;">
+                    <h3 style="margin: 0 0 15px 0; font-size: 16px;">📈 详细统计</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <!-- 按类型统计 -->
+                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #1890ff;">按类型统计</h4>
+                            <div id="typeStats"></div>
+                        </div>
+                        
+                        <!-- 按网站统计 -->
+                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #52c41a;">按网站统计（Top 5）</h4>
+                            <div id="hostStats"></div>
+                        </div>
+                        
+                        <!-- 按API Key统计 -->
+                        <div style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <h4 style="margin: 0 0 10px 0; font-size: 14px; color: #fa8c16;">按API Key统计</h4>
+                            <div id="apiKeyStats"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 历史记录列表 -->
+                <div id="historyRecords" style="max-height: 500px; overflow-y: auto; border: 1px solid #e8e8e8; border-radius: 4px;">
+                    <div class="no-data">加载中...</div>
+                </div>
+            </div>
+            
+            <!-- 模型管理 -->
+            <div id="models" class="content-card">
+                <h2>🤖 模型管理</h2>
+                
+                <!-- 当前模型 -->
+                <div class="current-model" style="margin-bottom: 30px;">
+                    <h3>🎯 当前模型</h3>
+                    <div class="info-item" style="background: #f9f9f9; padding: 15px; border-radius: 4px;">
+                        <div class="info-label">使用中的模型</div>
+                        <div class="info-value" id="currentModelName" style="font-size: 18px; color: #5486FF;">-</div>
+                    </div>
+                </div>
+                
+                <!-- 可用模型列表 -->
+                <div class="models-list" style="margin-bottom: 30px;">
+                    <h3>📦 可用模型</h3>
+                    <div id="modelsContent">
+                        <div class="no-data">加载中...</div>
+                    </div>
+                </div>
+                
+                <!-- 图片预处理选项 -->
+                <div class="preprocessing-options" style="margin-bottom: 30px;">
+                    <h3>🖼️ 图片预处理</h3>
+                    <p style="color: #666; font-size: 13px; margin-bottom: 15px;">
+                        启用预处理可以提高某些验证码的识别率，但可能会降低识别速度
+                    </p>
+                    <div id="preprocessingContent" class="config-form">
+                        <div class="no-data">加载中...</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 关于 -->
+            <div id="about" class="content-card">
+                <h2 style="border-bottom: 2px solid #1890ff; padding-bottom: 15px; margin-bottom: 25px;">
+                    ℹ️ 关于系统
+                </h2>
+                
+                <!-- 系统介绍 -->
+                <div style="background: linear-gradient(135deg, #f9f0ff 0%, #efdbff 100%); padding: 20px 25px; border-radius: 12px; margin-bottom: 25px; box-shadow: 0 2px 12px rgba(114, 46, 209, 0.15); border: 1px solid rgba(114, 46, 209, 0.2);">
+                    <h3 style="margin: 0 0 12px 0; font-size: 20px; color: #531dab; font-weight: 600;">🎯 本地验证码识别服务</h3>
+                    <p style="margin: 0; line-height: 1.7; font-size: 14px; color: #595959;">
+                        基于 ddddocr 的本地验证码识别服务，支持英数字符、滑块拼图等多种验证码类型。
+                        提供完整的管理后台、API Key 管理、识别历史追踪等功能。<br>
+                        <span style="color: #722ed1; font-weight: 500;">无需联网，保护隐私，高效稳定。</span>
+                    </p>
+                </div>
+                
+                <!-- 功能特性 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">✨ 核心功能</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 15px;">
+                        <div style="background: #f0f9ff; padding: 20px; border-radius: 8px; border-left: 4px solid #1890ff;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #1890ff;">🔍 验证码识别</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持英数字符、滑块拼图、滑块行为等多种验证码类型，基于 ddddocr 和 OpenCV 实现
+                            </div>
+                        </div>
+                        <div style="background: #f6ffed; padding: 20px; border-radius: 8px; border-left: 4px solid #52c41a;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #52c41a;">🔑 API 管理</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                完整的 API Key 管理系统，支持创建、启用/禁用、使用统计、按网站和类型分类统计
+                            </div>
+                        </div>
+                        <div style="background: #fff7e6; padding: 20px; border-radius: 8px; border-left: 4px solid #fa8c16;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #fa8c16;">📊 历史追踪</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                记录每次识别的详细信息，包括时间、网站、模型、API Key、结果和耗时
+                            </div>
+                        </div>
+                        <div style="background: #fff0f6; padding: 20px; border-radius: 8px; border-left: 4px solid #eb2f96;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #eb2f96;">🛡️ 安全防护</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                IP 白名单/黑名单、请求限流、登录失败锁定、JWT 认证、CSRF 保护
+                            </div>
+                        </div>
+                        <div style="background: #f9f0ff; padding: 20px; border-radius: 8px; border-left: 4px solid #722ed1;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">🎨 规则管理</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持为不同网站配置识别规则、预处理选项、图像处理参数等
+                            </div>
+                        </div>
+                        <div style="background: #e6fffb; padding: 20px; border-radius: 8px; border-left: 4px solid #13c2c2;">
+                            <div style="font-weight: bold; margin-bottom: 8px; color: #13c2c2;">🤖 模型管理</div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持多个识别模型、预处理选项配置、图像增强等功能
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- API 接口文档 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🔌 API 接口文档</h3>
+                    
+                    <!-- 验证码识别接口 -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #52c41a; margin-bottom: 10px;">验证码识别接口</h4>
+                        <table class="rate-limit-table" style="font-size: 13px;">
+                            <thead>
+                                <tr style="background: #fafafa;">
+                                    <th style="width: 80px;">方法</th>
+                                    <th style="width: 200px;">路径</th>
+                                    <th>说明</th>
+                                    <th style="width: 100px;">认证</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/hello</code></td>
+                                    <td>验证码识别（支持英数/滑块/行为识别）</td>
+                                    <td><span style="color: #f5222d;">API Key</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 规则管理接口 -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #52c41a; margin-bottom: 10px;">规则管理接口</h4>
+                        <table class="rate-limit-table" style="font-size: 13px;">
+                            <thead>
+                                <tr style="background: #fafafa;">
+                                    <th style="width: 80px;">方法</th>
+                                    <th style="width: 200px;">路径</th>
+                                    <th>说明</th>
+                                    <th style="width: 100px;">认证</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/rules</code></td>
+                                    <td>获取所有规则</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/captchaHostQuery</code></td>
+                                    <td>查询网站规则</td>
+                                    <td><span style="color: #52c41a;">API Key</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/captchaHostAdd</code></td>
+                                    <td>添加网站规则</td>
+                                    <td><span style="color: #52c41a;">API Key</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/captchaHostDel</code></td>
+                                    <td>删除网站规则</td>
+                                    <td><span style="color: #52c41a;">API Key</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/rules/export</code></td>
+                                    <td>导出规则文件</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- 管理后台接口 -->
+                    <div style="margin-bottom: 25px;">
+                        <h4 style="color: #52c41a; margin-bottom: 10px;">管理后台接口</h4>
+                        <table class="rate-limit-table" style="font-size: 13px;">
+                            <thead>
+                                <tr style="background: #fafafa;">
+                                    <th style="width: 80px;">方法</th>
+                                    <th style="width: 200px;">路径</th>
+                                    <th>说明</th>
+                                    <th style="width: 100px;">认证</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/admin/login</code></td>
+                                    <td>管理员登录</td>
+                                    <td>-</td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #52c41a; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">POST</span></td>
+                                    <td><code>/admin/logout</code></td>
+                                    <td>管理员登出</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/admin/status</code></td>
+                                    <td>检查登录状态</td>
+                                    <td><span style="color: #f5222d;">JWT</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/history/stats</code></td>
+                                    <td>获取识别历史统计</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/history/records</code></td>
+                                    <td>获取识别历史记录</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #fa8c16; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">PUT</span></td>
+                                    <td><code>/models/current</code></td>
+                                    <td>切换当前模型</td>
+                                    <td><span style="color: #f5222d;">Admin</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span style="background: #1890ff; color: white; padding: 2px 8px; border-radius: 3px; font-size: 11px;">GET</span></td>
+                                    <td><code>/health</code></td>
+                                    <td>健康检查</td>
+                                    <td>-</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- 验证码类型说明 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🎯 支持的验证码类型</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <div style="font-weight: bold; color: #1890ff; margin-bottom: 8px;">🔤 英数字符验证码</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                类型代码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">ocr_type=1</code>
+                            </div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                支持常见的英文字母和数字组合验证码，使用 ddddocr 进行识别
+                            </div>
+                        </div>
+                        <div style="background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <div style="font-weight: bold; color: #52c41a; margin-bottom: 8px;">🧩 滑动拼图验证码</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                类型代码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">ocr_type=4</code>
+                            </div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                识别滑块拼图缺口位置，返回滑动距离，基于 ddddocr 滑块模型
+                            </div>
+                        </div>
+                        <div style="background: #fff; padding: 18px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                            <div style="font-weight: bold; color: #fa8c16; margin-bottom: 8px;">↔️ 滑块行为验证码</div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px;">
+                                类型代码: <code style="background: #f5f5f5; padding: 2px 6px; border-radius: 3px;">ocr_type=5</code>
+                            </div>
+                            <div style="font-size: 13px; color: #666; line-height: 1.6;">
+                                基于行为算法计算滑动距离，适用于简单的滑块验证
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 技术栈 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🛠️ 技术栈</h3>
+                    <div style="background: #fafafa; padding: 20px; border-radius: 8px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">后端框架</div>
+                                <div style="font-size: 13px; color: #666;">Flask 3.0+</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">OCR引擎</div>
+                                <div style="font-size: 13px; color: #666;">ddddocr, OpenCV</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">数据存储</div>
+                                <div style="font-size: 13px; color: #666;">SQLite, JSON</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">身份认证</div>
+                                <div style="font-size: 13px; color: #666;">JWT, bcrypt</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">前端技术</div>
+                                <div style="font-size: 13px; color: #666;">原生 JavaScript</div>
+                            </div>
+                            <div>
+                                <div style="font-weight: bold; margin-bottom: 8px; color: #722ed1;">日志系统</div>
+                                <div style="font-size: 13px; color: #666;">Python logging</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 安全特性 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">🔒 安全特性</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px;">
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ IP 白名单/黑名单控制
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 请求频率限制（滑动窗口）
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 登录失败锁定机制
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ JWT Token 身份认证
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ CSRF 保护
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ API Key 管理
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 密码 bcrypt 加密
+                        </div>
+                        <div style="background: #fff; padding: 12px 15px; border-radius: 6px; border: 1px solid #e8e8e8; font-size: 13px;">
+                            ✅ 完整的访问日志
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 使用指南 -->
+                <div style="margin-bottom: 30px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">📖 快速开始</h3>
+                    <div style="background: #f6ffed; border: 1px solid #b7eb8f; padding: 20px; border-radius: 8px;">
+                        <ol style="margin: 0; padding-left: 20px; line-height: 2;">
+                            <li>在 "🔑 API Key 管理" 页面创建 API Key</li>
+                            <li>将 API Key 配置到您的 Tampermonkey 脚本中</li>
+                            <li>调用 <code style="background: white; padding: 2px 6px; border-radius: 3px;">/hello</code> 接口进行验证码识别</li>
+                            <li>在 "📊 识别历史" 页面查看识别记录</li>
+                            <li>在 "🎨 规则管理" 页面配置网站识别规则</li>
+                        </ol>
+                    </div>
+                </div>
+                
+                <!-- 版本信息 -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #1890ff; margin-bottom: 15px; font-size: 18px;">📌 版本信息</h3>
+                    <div style="background: #fff; padding: 20px; border-radius: 8px; border: 1px solid #e8e8e8;">
+                        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; font-size: 13px;">
+                            <div style="color: #999;">当前版本:</div>
+                            <div style="font-weight: bold; color: #1890ff;">v2.0.0</div>
+                            
+                            <div style="color: #999;">更新时间:</div>
+                            <div>2025-10-22</div>
+                            
+                            <div style="color: #999;">Python 版本:</div>
+                            <div>Python 3.8+</div>
+                            
+                            <div style="color: #999;">默认端口:</div>
+                            <div>1205</div>
+                            
+                            <div style="color: #999;">项目地址:</div>
+                            <div><a href="#" style="color: #1890ff; text-decoration: none;">GitHub</a></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 页脚 -->
+                <div style="text-align: center; padding: 20px; color: #999; font-size: 12px; border-top: 1px solid #e8e8e8; margin-top: 30px;">
+                    <p style="margin: 0;">© 2025 本地验证码识别服务 | 基于 Flask + ddddocr 构建</p>
+                    <p style="margin: 8px 0 0 0;">⚡ 无需联网 | 🔒 保护隐私 | 🚀 高效稳定</p>
+                </div>
+            </div>
+            
+            <!-- API Keys 管理 -->
+            <div id="apikeys" class="content-card">
+                <div class="rules-header">
+                    <h2 style="margin: 0; border: none;">🔑 API Key 管理</h2>
+                    <button class="action-btn btn-edit" onclick="showCreateKeyModal()" style="padding: 10px 20px;">
+                        ➕ 创建 API Key
+                    </button>
+                </div>
+                
+                <!-- API Key 统计展示框 -->
+                <div style="background: linear-gradient(135deg, #f6ffed 0%, #d9f7be 100%); padding: 20px 25px; border-radius: 12px; margin: 20px 0 25px 0; box-shadow: 0 2px 12px rgba(82, 196, 26, 0.15); border: 1px solid rgba(82, 196, 26, 0.2);">
+                    <h3 style="margin: 0 0 15px 0; font-size: 18px; font-weight: 600; color: #389e0d;">🔐 API Key 统计</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px;">
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(82, 196, 26, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">🔑 总 Key 数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #52c41a;" id="totalKeys">0</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(82, 196, 26, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">✅ 活跃 Key</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #52c41a;" id="activeKeys">0</div>
+                        </div>
+                        <div style="background: white; padding: 14px 16px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06); border: 1px solid rgba(82, 196, 26, 0.1);">
+                            <div style="font-size: 12px; color: #999; margin-bottom: 6px;">📊 总请求次数</div>
+                            <div style="font-size: 22px; font-weight: 700; color: #389e0d;" id="totalRequests">0</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- API Keys 列表 -->
+                <div id="apiKeysContent">
+                    <div class="no-rules">加载中...</div>
+                </div>
+            </div>
+
+            <!-- 系统设置 -->
+            <div id="settings" class="content-card">
+                <h2>⚙️ 系统设置</h2>
+                <div class="form-group">
+                    <label class="form-label">一言API地址</label>
+                    <input type="text" id="hitokotoApi" class="form-input" placeholder="例如: https://v1.hitokoto.cn">
+                    <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                        留空则不显示一言。推荐使用: https://v1.hitokoto.cn
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">随机背景图API地址</label>
+                    <input type="text" id="backgroundApi" class="form-input" placeholder="例如: https://api.example.com/random-image">
+                    <div style="font-size: 12px; color: #999; margin-top: 5px;">
+                        留空则使用默认背景。建议使用返回图片的API地址
+                    </div>
+                </div>
+                <div style="margin-top: 20px; display: flex; gap: 10px;">
+                    <button class="modal-btn btn-primary" onclick="saveSystemConfig()">保存设置</button>
+                    <button class="modal-btn btn-secondary" onclick="openChangePasswordModal(false)">修改密码</button>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 一言显示区域 -->
+    <div class="hitokoto-container" id="hitokotoContainer" style="display: none;">
+        <div class="hitokoto-text" id="hitokotoText"></div>
+        <div class="hitokoto-from" id="hitokotoFrom"></div>
+    </div>
+    
+    <!-- 编辑规则模态框 -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">编辑规则</h3>
+                <button class="modal-close" onclick="closeEditModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">网站</label>
+                    <input type="text" id="editHost" class="form-input" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">规则数据 (JSON 格式)</label>
+                    <textarea id="editRuleData" class="form-textarea"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-secondary" onclick="closeEditModal()">取消</button>
+                <button class="modal-btn btn-primary" onclick="saveRule()">保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 导入规则模态框 -->
+    <div id="importModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">导入规则</h3>
+                <button class="modal-close" onclick="closeImportModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">导入模式</label>
+                    <div class="import-mode">
+                        <label>
+                            <input type="radio" name="importMode" value="merge" checked>
+                            合并（与现有规则合并）
+                        </label>
+                        <label>
+                            <input type="radio" name="importMode" value="replace">
+                            覆盖（完全替换现有规则）
+                        </label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">选择文件</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="importFile" accept=".json" onchange="handleFileSelect(event)">
+                        <div class="file-input-label">
+                            📁 点击或拖拽 JSON 文件到此处
+                        </div>
+                    </div>
+                    <div id="fileName" class="file-name"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-secondary" onclick="closeImportModal()">取消</button>
+                <button class="modal-btn btn-primary" onclick="importRules()">导入</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 创建 API Key 模态框 -->
+    <div id="createKeyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">创建 API Key</h3>
+                <button class="modal-close" onclick="closeCreateKeyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">API Key 名称</label>
+                    <input type="text" id="keyName" class="form-input" placeholder="请输入有意义的名称，例如：产品环境">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-secondary" onclick="closeCreateKeyModal()">取消</button>
+                <button class="modal-btn btn-primary" onclick="createApiKey()">创建</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 显示 API Key 模态框 -->
+    <div id="showKeyModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">✅ API Key 创建成功</h3>
+                <button class="modal-close" onclick="closeShowKeyModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #e74c3c; font-weight: bold; margin-bottom: 15px;">
+                    ⚠️ 请妥善保管以下 API Key，关闭后将无法再次查看！
+                </p>
+                <div class="form-group">
+                    <label class="form-label">API Key</label>
+                    <textarea id="newApiKey" class="form-input" readonly style="font-family: monospace; font-size: 14px; padding: 15px; min-height: 80px;"></textarea>
+                </div>
+                <button class="modal-btn btn-primary" onclick="copyApiKey()" style="width: 100%; margin-top: 10px;">
+                    📋 复制 API Key
+                </button>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-primary" onclick="closeShowKeyModal()">我已保存</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 修改密码模态框 -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🔐 修改密码</h3>
+                <button class="modal-close" onclick="closeChangePasswordModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="forceChangeNotice" style="display: none; background: #fff1f0; border: 1px solid #ffa39e; padding: 12px; border-radius: 2px; margin-bottom: 20px; color: #cf1322; font-size: 13px;">
+                    ⚠️ 检测到您使用的是默认密码，出于安全考虑，请立即修改密码！
+                </div>
+                <div class="form-group">
+                    <label class="form-label">旧密码</label>
+                    <input type="password" id="oldPassword" class="form-input" placeholder="请输入旧密码" autocomplete="current-password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">新密码</label>
+                    <input type="password" id="newPassword" class="form-input" placeholder="请输入新密码" autocomplete="new-password">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">确认新密码</label>
+                    <input type="password" id="confirmPassword" class="form-input" placeholder="请再次输入新密码" autocomplete="new-password">
+                </div>
+                <div style="font-size: 12px; color: #999; margin-top: 10px;">
+                    密码建议：8位以上，包含字母、数字和特殊字符
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn btn-secondary" onclick="closeChangePasswordModal()" id="cancelChangePassword">取消</button>
+                <button class="modal-btn btn-primary" onclick="submitChangePassword()">确认修改</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/js-sha256@0.10.1/build/sha256.min.js"></script>
+
+    <script>
+        // 从后端接收的配置
+        const SERVER_CONFIG = {
+            hitokoto_api: "{{ hitokoto_api }}",
+            background_api: "{{ background_api }}",
+            server_url: "{{ server_url }}"
+        };
+        console.log('📌 服务配置已加载:', SERVER_CONFIG);
+    </script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
