@@ -275,11 +275,59 @@ def save_rules():
     try:
         with open(RULES_FILE, 'w', encoding='utf-8') as f:
             json.dump(rules_db, f, ensure_ascii=False, indent=2)
-        logger.debug(f"💾 规则已保存: {RULES_FILE} ({len(rules_db)} 个网站)")
+        logger.info(f"💾 规则已保存: {RULES_FILE} ({len(rules_db)} 个网站)")
         return True
     except Exception as e:
         logger.error(f"❌ 保存规则失败: {str(e)}")
         return False
+
+
+def deduplicate_rules():
+    """去除rules_db中的重复规则"""
+    global rules_db
+    total_removed = 0
+    
+    def is_duplicate(rule1, rule2):
+        """检查两条规则是否重复"""
+        # 对于滑动验证码 (ocr_type=4)
+        if rule1.get('ocr_type') == 4 and rule2.get('ocr_type') == 4:
+            return (rule1.get('big_image') == rule2.get('big_image') and
+                    rule1.get('small_image') == rule2.get('small_image') and
+                    rule1.get('move_item') == rule2.get('move_item'))
+        # 对于滑块行为验证码 (ocr_type=5)
+        elif rule1.get('ocr_type') == 5 and rule2.get('ocr_type') == 5:
+            return rule1.get('move_item') == rule2.get('move_item')
+        # 对于英数字验证码 (ocr_type=1 或默认)
+        elif rule1.get('ocr_type', 1) == 1 and rule2.get('ocr_type', 1) == 1:
+            return (rule1.get('img') == rule2.get('img') and
+                    rule1.get('input') == rule2.get('input'))
+        return False
+    
+    for host, rules in rules_db.items():
+        if not isinstance(rules, list) or len(rules) <= 1:
+            continue
+        
+        # 去重
+        unique_rules = []
+        for rule in rules:
+            is_dup = any(is_duplicate(rule, existing) for existing in unique_rules)
+            if not is_dup:
+                unique_rules.append(rule)
+            else:
+                total_removed += 1
+        
+        rules_db[host] = unique_rules
+        
+        if len(rules) != len(unique_rules):
+            logger.info(f"🧽 {host}: 移除了 {len(rules) - len(unique_rules)} 条重复规则")
+    
+    if total_removed > 0:
+        logger.info(f"✅ 总共移除 {total_removed} 条重复规则")
+        save_rules()
+    else:
+        logger.info("✅ 没有发现重复规则")
+    
+    return total_removed
 
 
 def save_api_keys():
@@ -1084,6 +1132,32 @@ def add_rules():
         # 添加或更新规则
         if host not in rules_db:
             rules_db[host] = []
+        
+        # 检查是否已存在相同规则（根据关键字段判断）
+        def is_duplicate(existing_rule, new_rule):
+            """检查规则是否重复"""
+            # 对于滑动验证码 (ocr_type=4)
+            if new_rule.get('ocr_type') == 4:
+                return (existing_rule.get('big_image') == new_rule.get('big_image') and
+                        existing_rule.get('small_image') == new_rule.get('small_image') and
+                        existing_rule.get('move_item') == new_rule.get('move_item'))
+            # 对于滑块行为验证码 (ocr_type=5)
+            elif new_rule.get('ocr_type') == 5:
+                return existing_rule.get('move_item') == new_rule.get('move_item')
+            # 对于英数字验证码 (ocr_type=1)
+            else:
+                return (existing_rule.get('img') == new_rule.get('img') and
+                        existing_rule.get('input') == new_rule.get('input'))
+        
+        # 检查是否存在重复
+        is_dup = any(is_duplicate(rule, data) for rule in rules_db[host])
+        
+        if is_dup:
+            print(f"⚠️  规则已存在，跳过添加: {host}")
+            return jsonify({
+                'code': 200,
+                'description': '规则已存在'
+            })
         
         rules_db[host].append(data)
         print(f"✅ 添加规则成功: {host}")
@@ -2073,6 +2147,10 @@ if __name__ == '__main__':
     # 加载配置、规则和 API Keys
     load_rules()
     load_api_keys()
+    
+    # 自动去除重复规则
+    logger.info("🧽 检查并移除重复规则...")
+    deduplicate_rules()
     
     # 加载安全配置
     logger.info("🔒 加载安全配置...")
