@@ -7,6 +7,6 @@
   },
   "session_timeout": 3600,
   "hitokoto_api": "https://v1.hitokoto.cn",
-  "background_api": "https://img.xirankj.top/api/images?category=动漫",
+  "background_api": "",
   "note": "密码已加密存储，请勿手动修改此文件"
 }
