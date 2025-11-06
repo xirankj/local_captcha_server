@@ -154,6 +154,9 @@ class CaptchaWrite {
                 if (e.button != 2) {//不为右键则返回
                     return;
                 }
+                // 阻止事件冒泡和默认行为
+                e.stopPropagation();
+                e.preventDefault();
                 if (that.getCapFoowwLocalStorage("crabAddRuleLock") != null) {
                     return;
                 }
@@ -222,6 +225,9 @@ class CaptchaWrite {
                 if (e.type != 'click' && e.button != 2) {//不为右键则返回
                     return;
                 }
+                // 阻止事件冒泡和默认行为，防止触发其他元素
+                e.stopPropagation();
+                e.preventDefault();
                 crabCaptcha.onSlideTagClick(e);
             });
         });
@@ -512,6 +518,9 @@ class CaptchaWrite {
                 if (e.type != 'click' && e.button != 2) {//不为右键则返回
                     return;
                 }
+                // 阻止事件冒泡和默认行为
+                e.stopPropagation();
+                e.preventDefault();
                 crabCaptcha.onSlideBehaviorClick(e);
             });
         });
@@ -2640,8 +2649,10 @@ const CKToolsFallback = {
             `;
             overlay.onclick = () => this.hideModal();
 
-            document.body.appendChild(overlay);
-            document.body.appendChild(modal);
+            // 确保添加到顶层窗口的body，而不是iframe
+            const targetBody = (window.self === window.top) ? document.body : window.top.document.body;
+            targetBody.appendChild(overlay);
+            targetBody.appendChild(modal);
         },
 
         hideModal: function() {
@@ -2695,23 +2706,28 @@ var crabCaptcha = new CaptchaWrite();
 (function () {
     // 直接使用内置UI组件，无需远程加载
     window.CKTools = CKToolsFallback;
-    GM_registerMenuCommand('规则管理', function () {
-        GUIAddRule();
-    }, 'a');
+    
+    // 仅在顶层窗口（非iframe）中注册菜单
+    if (window.self === window.top) {
+        GM_registerMenuCommand('规则管理', function () {
+            GUIAddRule();
+        }, 'a');
 
-    // 添加 API Key 设置菜单
-    GM_registerMenuCommand('🔑 设置 API Key', function () {
-        crabCaptcha.SetApiKey();
-    }, 'k');
+        // 添加 API Key 设置菜单
+        GM_registerMenuCommand('🔑 设置 API Key', function () {
+            crabCaptcha.SetApiKey();
+        }, 'k');
 
-    if (Set["idCard"] == '' || Set["idCard"] == undefined) {
-        GM_registerMenuCommand('设置识别码', function () {
-            crabCaptcha.SetIdCard();
-        }, 's');
+        if (Set["idCard"] == '' || Set["idCard"] == undefined) {
+            GM_registerMenuCommand('设置识别码', function () {
+                crabCaptcha.SetIdCard();
+            }, 's');
+        }
+        GM_registerMenuCommand('更多设置', function () {
+            GUISettings();
+        }, 'u');
     }
-    GM_registerMenuCommand('更多设置', function () {
-        GUISettings();
-    }, 'u');
+    
     crabCaptcha.Start();
     CKTools.addStyle(`
     #CKTOOLS-modal{
