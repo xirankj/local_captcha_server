@@ -257,6 +257,23 @@ class RecognitionHistory:
                 logger.info(f'📥 [识别历史] 已加载 {len(self.records)} 条记录')
         except Exception as e:
             logger.warning(f'⚠️  [识别历史] 加载失败: {str(e)}，使用空记录')
+    
+    def clear_history(self):
+        """清除所有识别历史记录"""
+        with self.lock:
+            self.records.clear()
+            self.stats = {
+                'total': 0,
+                'success': 0,
+                'failed': 0,
+                'by_type': defaultdict(lambda: {'total': 0, 'success': 0, 'failed': 0}),
+                'by_host': defaultdict(lambda: {'total': 0, 'success': 0, 'failed': 0}),
+                'by_model': defaultdict(lambda: {'total': 0, 'success': 0, 'failed': 0}),
+            }
+            self.unsaved_count = 0
+            # 保存空历史到文件
+            self._save_history_internal()
+            logger.info('🗑️ [识别历史] 所有记录已清除')
 
 
 class ModelManager:
